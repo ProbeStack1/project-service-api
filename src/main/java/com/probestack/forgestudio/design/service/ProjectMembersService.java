@@ -2,10 +2,16 @@ package com.probestack.forgestudio.design.service;
 
 import com.probestack.forgestudio.design.model.AddProjectMemberRequest;
 import com.probestack.forgestudio.design.model.ProjectMember;
-import com.probestack.forgestudio.design.model.UUID;
-import com.probestack.forgestudio.design.model.Void;
-import com.probestack.forgestudio.design.repository.ProjectMemberReqRepository;
+import com.probestack.forgestudio.design.repository.AddProjectMemberRequestRepository;
+import java.lang.Integer;
+import java.lang.Long;
+import java.lang.Number;
+import java.lang.NumberFormatException;
+import java.lang.Object;
+import java.lang.String;
+import java.lang.Void;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -22,10 +28,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ProjectMembersService {
-    private final ProjectMemberReqRepository addProjectMemberRequestRepository;
+    private final AddProjectMemberRequestRepository addProjectMemberRequestRepository;
 
     public ProjectMembersService(
-            ProjectMemberReqRepository addProjectMemberRequestRepository) {
+            AddProjectMemberRequestRepository addProjectMemberRequestRepository) {
         this.addProjectMemberRequestRepository = addProjectMemberRequestRepository;
     }
 
@@ -41,7 +47,31 @@ public class ProjectMembersService {
             AddProjectMemberRequest addProjectMemberRequest) {
         // Save the entity to database
         AddProjectMemberRequest savedAddProjectMemberRequest = addProjectMemberRequestRepository.save(addProjectMemberRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedAddProjectMemberRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * Converts OpenAPI path IDs to the repository ID type.
+     */
+    private Long toRepositoryId(Object id) {
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof Long value) {
+            return value;
+        }
+        if (id instanceof Integer value) {
+            return value.longValue();
+        }
+        if (id instanceof Number value) {
+            return value.longValue();
+        }
+        String text = id.toString();
+        try {
+            return Long.valueOf(text);
+        } catch (NumberFormatException ignored) {
+            return (long) text.hashCode();
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.probestack.forgestudio.design.service.ProjectMembersService;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-06T18:58:56.056729800-07:00[America/Los_Angeles]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-06T23:23:39.454893700-07:00[America/Los_Angeles]")
 @Controller
 @RequestMapping("${openapi.projectService.base-path:/v1}")
 public class ProjectMembersApiController implements ProjectMembersApi {

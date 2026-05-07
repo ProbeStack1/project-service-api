@@ -2,11 +2,17 @@ package com.probestack.forgestudio.design.service;
 
 import com.probestack.forgestudio.design.model.CreateProjectRequest;
 import com.probestack.forgestudio.design.model.Project;
-import com.probestack.forgestudio.design.model.UUID;
 import com.probestack.forgestudio.design.model.UpdateProjectRequest;
-import com.probestack.forgestudio.design.repository.ProjectReqRepository;
+import com.probestack.forgestudio.design.repository.CreateProjectRequestRepository;
+import java.lang.Integer;
+import java.lang.Long;
+import java.lang.Number;
+import java.lang.NumberFormatException;
+import java.lang.Object;
+import java.lang.String;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -23,9 +29,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ProjectsService {
-    private final ProjectReqRepository createProjectRequestRepository;
+    private final CreateProjectRequestRepository createProjectRequestRepository;
 
-    public ProjectsService(ProjectReqRepository createProjectRequestRepository) {
+    public ProjectsService(CreateProjectRequestRepository createProjectRequestRepository) {
         this.createProjectRequestRepository = createProjectRequestRepository;
     }
 
@@ -39,7 +45,8 @@ public class ProjectsService {
 
     public ResponseEntity<Project> getProject(UUID projectId) {
         // Retrieve entity by ID from database
-        Optional<CreateProjectRequest> entity = createProjectRequestRepository.findById(projectId);
+        Long repositoryId = toRepositoryId(projectId);
+        Optional<CreateProjectRequest> entity = createProjectRequestRepository.findById(repositoryId);
         // Map entity to response DTO
         return entity.map(this::mapToProject).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
@@ -63,6 +70,30 @@ public class ProjectsService {
         //   - deleteById(id) - Delete by ID
         //   - count() - Count all entities
         return null;
+    }
+
+    /**
+     * Converts OpenAPI path IDs to the repository ID type.
+     */
+    private Long toRepositoryId(Object id) {
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof Long value) {
+            return value;
+        }
+        if (id instanceof Integer value) {
+            return value.longValue();
+        }
+        if (id instanceof Number value) {
+            return value.longValue();
+        }
+        String text = id.toString();
+        try {
+            return Long.valueOf(text);
+        } catch (NumberFormatException ignored) {
+            return (long) text.hashCode();
+        }
     }
 
     /**

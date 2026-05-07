@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  description: Manage API projects and project members
+  title: Project Service API
+  version: 1.0.0
+servers:
+- url: https://api.example.com/v1
+tags:
+- name: Projects
+- name: Project Members
+paths:
+  /projects:
+    get:
+      operationId: listProjects
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Project"
+                type: array
+          description: List of projects
+      summary: List projects
+      tags:
+      - Projects
+      x-accepts: application/json
+      x-tags:
+      - tag: Projects
+    post:
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+          description: Project created
+      summary: Create project
+      tags:
+      - Projects
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Projects
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      parameters:
+      - explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+          description: Project details
+      summary: Get project
+      tags:
+      - Projects
+      x-accepts: application/json
+      x-tags:
+      - tag: Projects
+    patch:
+      operationId: updateProject
+      parameters:
+      - explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+          description: Updated project
+      summary: Update project
+      tags:
+      - Projects
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Projects
+  /projects/{projectId}/members:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/ProjectMember"
+                type: array
+          description: Members list
+      summary: List project members
+      tags:
+      - Project Members
+      x-accepts: application/json
+      x-tags:
+      - tag: Project Members
+    post:
+      parameters:
+      - explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddProjectMemberRequest"
+        required: true
+      responses:
+        "201":
+          description: Member added
+      summary: Add member to project
+      tags:
+      - Project Members
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Project Members
+components:
+  parameters:
+    projectId:
+      explode: false
+      in: path
+      name: projectId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      style: simple
+  schemas:
+    Project:
+      example:
+        specFormat: specFormat
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        baseUrl: baseUrl
+        isArchived: true
+        name: name
+        description: description
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        orgId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        orgId:
+          format: uuid
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        baseUrl:
+          type: string
+        specFormat:
+          type: string
+        isArchived:
+          type: boolean
+        createdAt:
+          format: date-time
+          type: string
+      type: object
+    CreateProjectRequest:
+      example:
+        specFormat: specFormat
+        baseUrl: baseUrl
+        name: name
+        description: description
+        orgId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        name:
+          type: string
+        orgId:
+          format: uuid
+          type: string
+        description:
+          type: string
+        baseUrl:
+          type: string
+        specFormat:
+          type: string
+      required:
+      - name
+      - orgId
+      type: object
+    UpdateProjectRequest:
+      example:
+        baseUrl: baseUrl
+        name: name
+        description: description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        baseUrl:
+          type: string
+      type: object
+    AddProjectMemberRequest:
+      example:
+        role: owner
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          format: uuid
+          type: string
+        role:
+          enum:
+          - owner
+          - editor
+          - viewer
+          type: string
+      required:
+      - userId
+      type: object
+    ProjectMember:
+      example:
+        role: role
+        joinedAt: 2000-01-23T04:56:07.000+00:00
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          format: uuid
+          type: string
+        role:
+          type: string
+        joinedAt:
+          format: date-time
+          type: string
+      type: object

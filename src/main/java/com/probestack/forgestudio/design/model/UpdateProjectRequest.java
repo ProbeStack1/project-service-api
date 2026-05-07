@@ -17,7 +17,7 @@ import jakarta.annotation.Generated;
 /**
  * UpdateProjectRequest
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-06T18:58:56.056729800-07:00[America/Los_Angeles]")public class UpdateProjectRequest {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-06T23:23:39.454893700-07:00[America/Los_Angeles]")public class UpdateProjectRequest {
 
   private String name;
 
